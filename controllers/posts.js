@@ -98,9 +98,9 @@ function download(req, res) {
     "public",
     "imgs",
     "posts",
-    req.params.slug + ".jpeg"
+    post.image
   );
-  res.download(filePath, req.params.slug + ".jpeg");
+  res.download(filePath, post.image);
 }
 
 function findOrFail(req, res) {
