@@ -67,4 +67,21 @@ function show(req, res) {
   });
 }
 
-module.exports = { index, show };
+/**
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+function create(req, res) {
+  res.format({
+    html: () => {
+      const html = "<h1>Creazione nuovo post</h1>";
+      res.type("html").send(html);
+    },
+    default: () => {
+      res.status(406).send("Type not valid");
+    },
+  });
+}
+
+module.exports = { index, show, create };
