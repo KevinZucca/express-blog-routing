@@ -48,6 +48,7 @@ function index(req, res) {
   });
 }
 
+// Nella rotta show, aggiungere al post una proprietà image_url dove creare il link completo per l’immagine
 /**
  *
  * @param {express.Request} req
@@ -56,14 +57,18 @@ function index(req, res) {
 function show(req, res) {
   res.format({
     json: () => {
-      const postSlug = req.params.slug;
-      const post = jsonPosts.find((post) => post.slug == postSlug);
+      const post = findOrFail(req, res);
 
-      if (!post) {
+      const postSlug = req.params.slug;
+      const searchedPost = jsonPosts.find((post) => post.slug == postSlug);
+      searchedPost.image_url = "public/imgs/" + post.image;
+
+      if (!searchedPost) {
         res.status(404).send(`Post con slug ${postSlug} non trovato`);
         return;
       }
-      res.type("json").send(post);
+      console.log(searchedPost);
+      res.type("json").send(searchedPost);
     },
   });
 }
