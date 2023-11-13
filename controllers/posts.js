@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const loadNav = require("../utilities/loadNav");
 const jsonPosts = require("../db");
+const postList = require("../db");
 
 /**
  *
@@ -84,4 +85,35 @@ function create(req, res) {
   });
 }
 
-module.exports = { index, show, create };
+/**
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+function download(req, res) {
+  const post = findOrFail(req, res);
+  const filePath = path.resolve(
+    __dirname,
+    "..",
+    "public",
+    "imgs",
+    "posts",
+    req.params.slug + ".jpeg"
+  );
+  res.download(filePath, req.params.slug + ".jpeg");
+}
+
+function findOrFail(req, res) {
+  const postSlug = req.params.slug;
+
+  const post = postList.find((post) => post.slug == postSlug);
+
+  if (!post) {
+    res.status(404).send(`Post con slug '${postSlug}' non trovato`);
+    return;
+  }
+
+  return post;
+}
+
+module.exports = { index, show, create, download };
