@@ -17,25 +17,28 @@ function index(req, res) {
         path.resolve(__dirname, "../layouts/posts/posts.html"),
         "utf-8"
       );
-
       const htmlContent = [];
 
       htmlContent.push("<h1>Ricette</h1>");
-      htmlContent.push("<ul>");
+      htmlContent.push('<div id="container" class="container">');
 
       for (const post of jsonPosts) {
         htmlContent.push(
-          `<li>
+          `<div class="card">
+            <img id="card-img" src='/imgs/posts/${post.image}'>
               <div class="card-body">
                   <h2>${post.title} </h2>
                   <p class="card-text">${post.content} </p>
-                  <strong>#${post.tags} </strong>
+                  <strong>${post.tags} </strong>
+                  <button id="recipe-button">
+                    <a id="recipe-link" href="/posts/${post.slug}">Vai alla ricetta!</a>
+                  </button>
               </div>
-            </li>`
+          </div>`
         );
       }
 
-      htmlContent.push("</ul>");
+      htmlContent.push("</div>");
       const joinedHtml = htmlContent.join("");
 
       const navbar = loadNav();
@@ -48,7 +51,6 @@ function index(req, res) {
   });
 }
 
-// Nella rotta show, aggiungere al post una proprietà image_url dove creare il link completo per l’immagine
 /**
  *
  * @param {express.Request} req
@@ -61,13 +63,12 @@ function show(req, res) {
 
       const postSlug = req.params.slug;
       const searchedPost = jsonPosts.find((post) => post.slug == postSlug);
-      searchedPost.image_url = "public/imgs/" + post.image;
+      searchedPost.image_url = "http://localhost:3000/imgs/posts/" + post.image;
 
       if (!searchedPost) {
         res.status(404).send(`Post con slug ${postSlug} non trovato`);
         return;
       }
-      console.log(searchedPost);
       res.type("json").send(searchedPost);
     },
   });
@@ -89,7 +90,8 @@ function create(req, res) {
     },
   });
 }
-
+// Aggiungere un altra proprietà image_download_url che invece dovrà far scaricare l’immagine puntando
+//  alla rotta download
 /**
  *
  * @param {express.Request} req
@@ -105,6 +107,7 @@ function download(req, res) {
     "posts",
     post.image
   );
+
   res.download(filePath, post.image);
 }
 
