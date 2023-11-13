@@ -47,4 +47,24 @@ function index(req, res) {
   });
 }
 
-module.exports = { index };
+/**
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+function show(req, res) {
+  res.format({
+    json: () => {
+      const postSlug = req.params.slug;
+      const post = jsonPosts.find((post) => post.slug == postSlug);
+
+      if (!post) {
+        res.status(404).send(`Post con slug ${postSlug} non trovato`);
+        return;
+      }
+      res.type("json").send(post);
+    },
+  });
+}
+
+module.exports = { index, show };
